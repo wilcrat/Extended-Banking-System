@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extended Banking System</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
+    <div id="container">
+      <h1>Extended Banking System</h1>
+
+      <!-- Customer Registration Form -->
+      <h2>Customer Registration</h2>
+      <form id="registration-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required />
+
+        <label for="id-number">ID Number:</label>
+        <input type="text" id="id-number" required />
+
+        <label for="phone-number">Phone Number:</label>
+        <input type="tel" id="phone-number" required />
+        <br />
+        <label for="beneficiary-details">Beneficiary Details:</label>
+        <textarea id="beneficiary-details" rows="3" required></textarea>
+
+        <label for="passport-upload">Passport (JPEG):</label>
+        <input type="file" id="passport-upload" accept="image/jpeg" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required />
+
+        <button type="button" onclick="registerCustomer()">
+          Register Customer
+        </button>
+      </form>
+
+      <div id="output"></div>
+    </div>
+
+    <!-- Sidebar for Navigation -->
+    <div id="sidebar">
+      <h3>Navigation</h3>
+      <button onclick="showHistory()">History/Events</button>
+      <button onclick="sendMessage()">Send Message</button>
+      <button onclick="grantLoan()">Grant Loan</button>
+      <label for="customer-id">Customer Search:</label>
+      <input type="text" id="customer-id" placeholder="Enter Customer ID" />
+      <button onclick="searchCustomer()">Search</button>
+      <button onclick="generateChequeBook()">Generate Cheque Book</button>
+      <button onclick="callCustomer()">Call Customer</button>
+      <button onclick="mpesaIntegration()">M-Pesa Integration</button>
+
+      <!-- Banking Operations Section -->
+      <button onclick="toggleBankingOperations()">Banking Operations</button>
+      <div id="banking-operations">
+        <label for="account-type">Select Account Type:</label>
+        <select id="account-type">
+          <option value="checking">Checking Account</option>
+          <option value="savings">Savings Account</option>
+        </select>
+
+        <label for="amount">Enter Amount:</label>
+        <input type="number" id="amount" placeholder="Enter amount" />
+
+        <label for="deposit-type">Deposit Type:</label>
+        <select id="deposit-type">
+          <option value="cash">Cash</option>
+          <option value="cheque">Cheque</option>
+        </select>
+
+        <button onclick="deposit()">Deposit</button>
+        <button onclick="withdraw()">Withdraw</button>
+        <button onclick="checkBalance()">Check Balance</button>
+
+        <div id="output-banking"></div>
+      </div>
+    </div>
+
+    <script>
+      let checkingBalance = 1000;
+      let savingsBalance = 2000;
+
+      function toggleBankingOperations() {
+        const bankingOperations = document.getElementById("banking-operations");
+        bankingOperations.style.display =
+          bankingOperations.style.display === "block" ? "none" : "block";
+      }
+
+      function registerCustomer() {
+        const name = document.getElementById("name").value;
+        const idNumber = document.getElementById("id-number").value;
+        const phoneNumber = document.getElementById("phone-number").value;
+        const beneficiaryDetails = document.getElementById(
+          "beneficiary-details"
+        ).value;
+        const email = document.getElementById("email").value;
+
+        // Upload passport (simulate, in a real scenario, you'd handle file upload differently)
+        const passportUpload = document.getElementById("passport-upload");
+        const passportFileName = passportUpload.value.split("\\").pop();
+
+        // Simulate server-side processing and generate account details
+        const accountName = `${name}'s Account`;
+        const accountNumber = generateAccountNumber();
+
+        // Display registration and account details
+        const registrationMessage = `Successfully registered ${name}.`;
+        const accountDetailsMessage = `Account Name: ${accountName}<br>Account Number: ${accountNumber}`;
+        const message = `${registrationMessage}<br>${accountDetailsMessage}`;
+        displayOutput(message);
+      }
+
+      function generateAccountNumber() {
+        // Simulate generating a unique account number (you'd implement this logic differently in a real system)
+        return Math.floor(Math.random() * 1000000000) + 1000000000;
+      }
+
+      function deposit() {
+        const accountType = document.getElementById("account-type").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+        const depositType = document.getElementById("deposit-type").value;
+
+        if (isNaN(amount) || amount <= 0) {
+          displayOutput("Please enter a valid amount.");
+          return;
+        }
+
+        // Additional logic for deposit type (cash or cheque)
+        if (depositType === "cash") {
+          processCashDeposit(accountType, amount);
+        } else if (depositType === "cheque") {
+          processChequeDeposit(accountType, amount);
+        }
+      }
+
+      function processCashDeposit(accountType, amount) {
+        // Logic for processing cash deposit
+        if (accountType === "checking") {
+          checkingBalance += amount;
+        } else if (accountType === "savings") {
+          savingsBalance += amount;
+        }
+
+        const receipt = generateReceipt(accountType, amount);
+        displayOutput(
+          `Successfully deposited $${amount} in cash into ${accountType} account.<br>${receipt}`
+        );
+      }
+
+      function processChequeDeposit(accountType, amount) {
+        // Logic for processing cheque deposit
+        // This is a placeholder and would involve more complex processing
+        displayOutput(
+          "Cheque deposit processing is not implemented in this demo."
+        );
+      }
+
+      function withdraw() {
+        const accountType = document.getElementById("account-type").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+
+        if (isNaN(amount) || amount <= 0) {
+          displayOutput("Please enter a valid amount.");
+          return;
+        }
+
+        let balance;
+
+        if (accountType === "checking") {
+          balance = checkingBalance;
+        } else if (accountType === "savings") {
+          balance = savingsBalance;
+        }
+
+        if (amount > balance) {
+          displayOutput("Insufficient funds.");
+          return;
+        }
+
+        if (accountType === "checking") {
+          checkingBalance -= amount;
+        } else if (accountType === "savings") {
+          savingsBalance -= amount;
+        }
+
+        const receipt = generateReceipt(accountType, -amount);
+        displayOutput(
+          `Successfully withdrew $${amount} from ${accountType} account.<br>${receipt}`
+        );
+      }
+
+      function checkBalance() {
+        const accountType = document.getElementById("account-type").value;
+
+        if (accountType === "checking") {
+          displayOutput(`Checking Account Balance: $${checkingBalance}`);
+        } else if (accountType === "savings") {
+          displayOutput(`Savings Account Balance: $${savingsBalance}`);
+        }
+      }
+
+      function generateReceipt(accountType, amount) {
+        const receiptRef = Math.floor(Math.random() * 1000000000);
+        const receipt = `Receipt Reference: ${receiptRef}<br>Transaction Type: ${
+          amount > 0 ? "Deposit" : "Withdrawal"
+        }<br>Amount: $${Math.abs(amount)}`;
+        // Add download link for receipt
+        const downloadLink = `<br><a href="#" onclick="downloadReceipt('${accountType}', ${receiptRef})">Download Receipt</a>`;
+        return receipt + downloadLink;
+      }
+
+      function downloadReceipt(accountType, receiptRef) {
+        const receiptContent = `Receipt Reference: ${receiptRef}\nTransaction Type: ${accountType}\nAmount: $${Math.abs(
+          amount
+        )}`;
+        const blob = new Blob([receiptContent], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `receipt_${accountType}_${receiptRef}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      function showHistory() {
+        // Logic to display transaction history or events
+        displayOutput("Transaction history or events will be displayed here.");
+      }
+
+      function sendMessage() {
+        const messageSection = document.createElement("div");
+        messageSection.innerHTML =
+          '<label for="message">Type your message:</label>' +
+          '<textarea id="message" rows="3" placeholder="Enter your message"></textarea>' +
+          '<button onclick="sendMessageToCustomer()">Send Message</button>';
+        document.getElementById("output").appendChild(messageSection);
+      }
+
+      function sendMessageToCustomer() {
+        const message = document.getElementById("message").value;
+        // Logic to send the message
+        displayOutput(`Message sent: ${message}`);
+      }
+
+      function searchCustomer() {
+        const customerId = document.getElementById("customer-id").value;
+        // Logic to fetch and display customer details, transactions, and balance
+        displayOutput(
+          `Customer details for ID ${customerId} will be displayed here.`
+        );
+      }
+
+      function grantLoan() {
+        const customerId = prompt("Enter customer ID for loan approval:");
+        // Logic to fetch customer details and check eligibility for a loan
+        const loanAmount = prompt("Enter loan amount:");
+        const interestRate = 0.02; // 2%
+        const maxLoanAmount = 5000000;
+
+        if (loanAmount > maxLoanAmount) {
+          displayOutput("Loan amount exceeds the maximum limit.");
+          return;
+        }
+
+        const totalLoanAmount =
+          parseFloat(loanAmount) + parseFloat(loanAmount) * interestRate;
+        const repaymentInstallments = 12; // Repay in 12 installments
+
+        // Logic to generate and display loan permit letter
+        const permitLetter = generateLoanPermitLetter(
+          customerId,
+          loanAmount,
+          interestRate,
+          repaymentInstallments
+        );
+        displayOutput(
+          `Loan approved for customer ID ${customerId}.<br>${permitLetter}`
+        );
+        // Add download link for loan permit letter
+        const downloadLink = `<br><a href="#" onclick="downloadLoanPermit('${customerId}', ${loanAmount}, ${interestRate}, ${repaymentInstallments})">Download Loan Permit Letter</a>`;
+        displayOutput(downloadLink);
+      }
+
+      function generateLoanPermitLetter(
+        customerId,
+        loanAmount,
+        interestRate,
+        repaymentInstallments
+      ) {
+        // Logic to generate the loan permit letter
+        const permitLetter = `Loan Permit Letter
+        Customer ID: ${customerId}
+        Loan Amount: $${loanAmount}
+        Interest Rate: ${interestRate * 100}%
+        Total Repayment Amount: $${
+          parseFloat(loanAmount) + parseFloat(loanAmount) * interestRate
+        }
+        Repayment Installments: ${repaymentInstallments} months
+        `;
+        return permitLetter;
+      }
+
+      function downloadLoanPermit(
+        customerId,
+        loanAmount,
+        interestRate,
+        repaymentInstallments
+      ) {
+        const permitLetter = generateLoanPermitLetter(
+          customerId,
+          loanAmount,
+          interestRate,
+          repaymentInstallments
+        );
+        const blob = new Blob([permitLetter], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `loan_permit_${customerId}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      function generateChequeBook() {
+        // Logic to generate cheque book
+        // This is a placeholder and would involve more complex processing
+        displayOutput(
+          "Cheque book generation is not implemented in this demo."
+        );
+      }
+
+      function callCustomer() {
+        // Logic to initiate a call to the customer
+        // This is a placeholder and would involve more complex processing
+        displayOutput("Initiating call to the customer...");
+      }
+
+      function mpesaIntegration() {
+        // Logic for integrating with M-Pesa
+        // This is a placeholder and would involve more complex processing
+        displayOutput("M-Pesa integration is not implemented in this demo.");
+      }
+
+      function displayOutput(message) {
+        document.getElementById("output").innerHTML = message;
+      }
+    </script>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        display: flex;
+        background-color: #2b3b49; /* Light gray background */
+        color: #fefdfe; /* Dark text color */
+      }
+
+      #container {
+        flex: 1;
+        margin-right: 20px;
+        padding: 20px;
+      }
+
+      #sidebar {
+        width: 200px;
+        background-color: #333; /* Dark background for the sidebar */
+        padding: 10px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        background-color: #78bdcc; /* Google Blue */
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+      }
+      h2 {
+        background-color: #697173;
+      }
+
+      button {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #575f92; /* Google Blue */
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+      }
+
+      button:hover {
+        background-color: #df600c; /* Darker color on hover */
+      }
+
+      form,
+      select,
+      input,
+      textarea {
+        background-color: #fff; /* White background for forms */
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid black;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Light shadow for a card effect */
+      }
+      form {
+        background-color: #697173;
+      }
+      #output {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #c48a0d;
+        background-color: #dbb406; /* White background for output */
+        border-radius: 5px;
+      }
+
+      #banking-operations {
+        background-color: #4285f4; /* Google Blue for banking operations section */
+        padding: 20px;
+        border-radius: 5px;
+      }
+
+      #sidebar h3 {
+        color: #fff; /* Sidebar heading color */
+      }
+
+      #sidebar button {
+        width: 100%;
+        text-align: left;
+      }
+
+      #sidebar button:hover {
+        background-color: #3c79e6; /* Darker color on hover for sidebar buttons */
+      }
+    </style>
+  </body>
+</html>
