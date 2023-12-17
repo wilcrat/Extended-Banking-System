@@ -38,7 +38,7 @@
 
         <div>
           <label for="beneficiary-details">Beneficiary Details:</label> <br />
-          <textarea id="beneficiary-details" rows="3" required></textarea>
+          <input type="text" id="beneficiary-details" rows="3" required /><br />
           <button type="button" onclick="registerCustomer()">
             Register Customer
           </button>
@@ -386,6 +386,7 @@
         padding: 10px;
         border-radius: 5px;
         color: white;
+        margin-top: -5px;
       }
       h2 {
         background-color: #697173;
@@ -440,7 +441,15 @@
         padding: 20px;
         border-radius: 5px;
       }
-
+      #beneficiary-details {
+        height: 43vh;
+      }
+      #customer-id,
+      #amount,
+      #account-type,
+      #deposit-type {
+        width: 90%;
+      }
       #sidebar h3 {
         color: #fff; /* Sidebar heading color */
       }
