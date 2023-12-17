@@ -13,27 +13,36 @@
       <!-- Customer Registration Form -->
       <h2>Customer Registration</h2>
       <form id="registration-form">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required />
+        <div>
+          <label for="name">Name:</label><br />
+          <input type="text" id="name" required /> <br />
 
-        <label for="id-number">ID Number:</label>
-        <input type="text" id="id-number" required />
+          <label for="id-number">ID Number:</label><br />
+          <input type="text" id="id-number" required /> <br />
 
-        <label for="phone-number">Phone Number:</label>
-        <input type="tel" id="phone-number" required />
-        <br />
-        <label for="beneficiary-details">Beneficiary Details:</label>
-        <textarea id="beneficiary-details" rows="3" required></textarea>
+          <label for="phone-number">Phone Number:</label><br />
+          <input type="tel" id="phone-number" required /> <br />
 
-        <label for="passport-upload">Passport (JPEG):</label>
-        <input type="file" id="passport-upload" accept="image/jpeg" required />
+          <label for="passport-upload">Passport (JPEG):</label> <br />
+          <input
+            type="file"
+            id="passport-upload"
+            accept="image/jpeg"
+            required
+          />
+          <br />
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" required />
+          <label for="email">Email:</label> <br />
+          <input type="email" id="email" required /> <br />
+        </div>
 
-        <button type="button" onclick="registerCustomer()">
-          Register Customer
-        </button>
+        <div>
+          <label for="beneficiary-details">Beneficiary Details:</label> <br />
+          <textarea id="beneficiary-details" rows="3" required></textarea>
+          <button type="button" onclick="registerCustomer()">
+            Register Customer
+          </button>
+        </div>
       </form>
 
       <div id="output"></div>
@@ -407,8 +416,16 @@
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Light shadow for a card effect */
       }
-      form {
+      #registration-form {
         background-color: #697173;
+        display: flex;
+        justify-content: space-between;
+      }
+      #registration-form div {
+        width: 50%;
+      }
+      input {
+        width: 20vw;
       }
       #output {
         margin-top: 20px;
